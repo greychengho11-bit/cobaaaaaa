@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Love Check 💖</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Patrick Hand', cursive;
+}
+
+body {
+  background: #fff;
+  color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+  text-align: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 420px;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+.sub {
+  margin-top: 10px;
+  font-size: 1.2rem;
+}
+
+.scanner {
+  margin: 40px auto;
+  width: 150px;
+  height: 150px;
+  border: 3px dashed black;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.scan-line {
+  position: absolute;
+  width: 80%;
+  height: 4px;
+  background: black;
+  animation: scan 1.5s infinite;
+}
+
+@keyframes scan {
+  0% { top: 10%; }
+  50% { top: 80%; }
+  100% { top: 10%; }
+}
+
+.hidden { display: none; }
+
+button {
+  padding: 10px 20px;
+  border: 2px solid black;
+  background: white;
+  border-radius: 20px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+button:hover {
+  background: black;
+  color: white;
+}
+
+.bounce {
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.hearts {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.heart {
+  position: absolute;
+  font-size: 20px;
+  animation: float 3s linear infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0); opacity:1; }
+  100% { transform: translateY(-200px); opacity:0; }
+}
+
+.kiss {
+  position: absolute;
+  font-size: 30px;
+  animation: pop 1s ease forwards;
+}
+
+@keyframes pop {
+  0% { transform: scale(0); opacity:0; }
+  100% { transform: scale(1.5); opacity:1; }
+}
+
+.shake {
+  animation: shake 0.4s;
+}
+
+@keyframes shake {
+  0% { transform: translate(0); }
+  25% { transform: translate(-5px); }
+  50% { transform: translate(5px); }
+  75% { transform: translate(-5px); }
+  100% { transform: translate(0); }
+}
+
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <!-- Scene 1 -->
+  <div id="scene1">
+    <h1>LOVE CHECK!</h1>
+    <div class="sub">Put your finger here 👇</div>
+    <div class="scanner" id="scanner">
+      <div class="scan-line hidden" id="scanLine"></div>
+      ❤️
+    </div>
+    <div>↓ hold me ↓</div>
+  </div>
+
+  <!-- Scene 2 -->
+  <div id="scene2" class="hidden">
+    <h1>Scanning...</h1>
+    <div class="sub">Scanning your love energy…</div>
+    <div class="scanner">
+      <div class="scan-line"></div>
+    </div>
+  </div>
+
+  <!-- Scene 3 -->
+  <div id="scene3" class="hidden">
+    <h1>hold on…</h1>
+    <div class="sub">(･o･;)</div>
+  </div>
+
+  <!-- Scene 4 -->
+  <div id="scene4" class="hidden">
+    <h1 class="bounce">❤️ 100% NEED KISSES ❤️</h1>
+    <div class="hearts" id="hearts"></div>
+  </div>
+
+  <!-- Scene 5 -->
+  <div id="scene5" class="hidden">
+    <h1>let me fix that 😌</h1>
+    <button onclick="goFinal()">Continue 💋</button>
+  </div>
+
+  <!-- Scene 6 -->
+  <div id="scene6" class="hidden">
+    <h1>MWAH 💋</h1>
+    <div id="kissArea"></div>
+    <button onclick="restart()">Again? 💖</button>
+  </div>
+
+</div>
+
+<script>
+let scanner = document.getElementById("scanner");
+let holdTimer;
+let held = false;
+
+function vibrate() {
+  if (navigator.vibrate) navigator.vibrate(50);
+}
+
+function startHold() {
+  held = true;
+  holdTimer = setTimeout(() => {
+    nextScene("scene1", "scene2");
+    vibrate();
+
+    setTimeout(() => {
+      nextScene("scene2", "scene3");
+      setTimeout(() => {
+        nextScene("scene3", "scene4");
+        spawnHearts();
+        setTimeout(() => {
+          nextScene("scene4", "scene5");
+        }, 2000);
+      }, 1500);
+    }, 2000);
+
+  }, 800);
+}
+
+function cancelHold() {
+  held = false;
+  clearTimeout(holdTimer);
+}
+
+scanner.addEventListener("mousedown", startHold);
+scanner.addEventListener("mouseup", cancelHold);
+scanner.addEventListener("mouseleave", cancelHold);
+
+scanner.addEventListener("touchstart", startHold);
+scanner.addEventListener("touchend", cancelHold);
+
+function nextScene(a, b) {
+  document.getElementById(a).classList.add("hidden");
+  document.getElementById(b).classList.remove("hidden");
+}
+
+function spawnHearts() {
+  let container = document.getElementById("hearts");
+  for (let i = 0; i < 20; i++) {
+    let h = document.createElement("div");
+    h.className = "heart";
+    h.innerText = "❤️";
+    h.style.left = Math.random() * 100 + "%";
+    h.style.top = "80%";
+    h.style.animationDelay = Math.random() + "s";
+    container.appendChild(h);
+  }
+}
+
+function goFinal() {
+  nextScene("scene5", "scene6");
+  document.body.classList.add("shake");
+
+  let area = document.getElementById("kissArea");
+
+  for (let i = 0; i < 8; i++) {
+    let k = document.createElement("div");
+    k.className = "kiss";
+    k.innerText = "💋";
+    k.style.left = Math.random() * 80 + "%";
+    k.style.top = Math.random() * 60 + "%";
+    area.appendChild(k);
+  }
+
+  if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
+}
+
+function restart() {
+  location.reload();
+}
+</script>
+
+</body>
+</html>
